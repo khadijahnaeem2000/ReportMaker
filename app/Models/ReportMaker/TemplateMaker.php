@@ -9,4 +9,5 @@ class TemplateMaker extends Model
 {
     use HasFactory;
     protected $table = "templatemaker";
+    protected $fillable=['EndDate','IsActive'];
 }

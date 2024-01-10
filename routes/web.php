@@ -19,9 +19,11 @@ Route::get('/', function () {
 });
 
 
-Route::get('IdCard/{id}',[TemplatesController::class, 'IdCard'])->name("IDCard");
+Route::get('IdCard/{folderid}/{id?}',[TemplatesController::class, 'IdCard'])->name("IDCard");
+Route::get('template/Delete/{id}',[TemplatesController::class, 'deletetemplate'])->name("TemplateDelete");
 Route::get('/TemplateFolder',[TemplatesController::class, 'TemplateFolders'])->name("folders");
 Route::get('/Templates/{id}',[TemplatesController::class, 'Templates'])->name("templates");
+
 Route::get('/TemplateFolderCreate',[TemplatesController::class, 'TemplateFoldersCreate'])->name("foldercreate");
 Route::post('/TemplateFolderStore',[TemplatesController::class, 'storeTemplate'])->name('folderstore');
 Route::get('/viewTemplate/{id}/{templateid}',[TemplatesController::class, 'viewtemplate'])->name("viewtemplate");

@@ -164,6 +164,9 @@
     <!-- Top Bar END -->
     <!-- Icon Menu START -->
     <div id="palleon-icon-menu">
+    <button  type="button" class="palleon-icon-menu-btn" >
+           <a class="palleon-btn primary">Back</a>
+        </button>
     <button id="palleon-btn-adjust" type="button" class="palleon-icon-menu-btn active" data-target="#palleon-adjust">
             <span class="material-icons">tune</span><span class="palleon-icon-menu-title">Home</span>
         </button>
@@ -179,12 +182,18 @@
         <button id="palleon-btn-draw" type="button" class="palleon-icon-menu-btn" data-target="#palleon-draw">
             <span class="material-icons">brush</span><span class="palleon-icon-menu-title">Brushes</span>
         </button>
+        <button  type="button" class="palleon-icon-menu-btn">
+        <button class="btn btn-sm btn-primary mr-2" id="temform">Save</button>
+        <a class="btn btn-sm btn-warning mr-2" id="clear">Clear</a>
+        </button>
+       
         
         <button id="palleon-btn-settings" type="button" class="palleon-icon-menu-btn stick-to-bottom" data-target="#palleon-settings">
             <span class="material-icons">settings</span><span class="palleon-icon-menu-title">Settings</span>
         </button>
+       
       
-        <button class="btn btn-sm btn-primary mr-2" id="temform">Save</button>
+        
     </div>
    
     <div id="palleon-icon-panel">
@@ -199,7 +208,7 @@
                 </div>  
                 <div class="palleon-file-field">
                     <label for="" class="control-label">TemplateName</label>
-                    <input type="text" name="templatename" id="templatename" class="palleon-form-field" required/>
+                    <input type="text" name="templatename" value="{{$templatename}}"id="templatename" class="palleon-form-field" required/>
                    
                  </div> 
                 <div class="palleon-file-field">
@@ -365,8 +374,12 @@
            
                     
                         <div id="mainframe" style="padding-left: 20%;">
+                        @if($template_code==null)
                             <div  id="id-card-field" class='border border-dark target parent' > 
                           </div>
+                          @else
+                        <?php  echo $template_code;?>
+                          @endif
                         </div>
                       </div>
                     <div id="palleon-canvas-wrap">
@@ -388,11 +401,18 @@
     </div>
     <!-- Body END -->
     <!-- Toggle Right Button -->
-
+    <div id="palleon-right-col">
+        <h6 class="palleon-layers-title"><span class="material-icons">layers</span>History</h6>
+       
+        <!-- Layer list - Don't remove it! -->
+        <ul id="palleon-layers" class="ui-sortable"></ul>
+        <!-- Bulk delete layers -->
+        
+    </div>
    
     <!-- Right Column END -->
     <!-- Modal History START -->
-    <div id="modal-history" class="palleon-modal">
+    <div id="modal-history" class="palleon-modal" style="visibility:visible">
         <div class="palleon-modal-close" data-target="#modal-history"><span class="material-icons">close</span></div>
         <div class="palleon-modal-wrap">
             <div class="palleon-modal-inner">
@@ -425,32 +445,43 @@
     </script>
    <script>
 
+$(document).ready(function() {
+    var palleonShapeSelect = $('#palleon-shape-select');
+    var columnValuesSelect = $('#column-values-select');
 
-    $(document).ready(function() {
-        $('#palleon-shape-select').change(function() {
-            var selectedTable = $(this).val();
-            var columnValuesSelect = $('#column-values-select');
+    palleonShapeSelect.change(function() {
+        var selectedTable = $(this).val();
 
-            // Clear previous options
-            columnValuesSelect.empty();
+        // Clear previous options
+        columnValuesSelect.empty();
 
-            if (selectedTable !== 'none') {
-                var selectedTableColumns = {!! json_encode($Tablecolumns) !!}[selectedTable][0];
-                for (var i = 0; i < selectedTableColumns.length; i++) {
+        if (selectedTable !== 'none') {
+            var selectedTableColumns = {!! json_encode($Tablecolumns) !!}[selectedTable][0];
+
+            if (selectedTableColumns && Object.keys(selectedTableColumns).length > 0) {
+                Object.keys(selectedTableColumns).forEach(function(columnName) {
+                    var dataType = selectedTableColumns[columnName];
+
                     columnValuesSelect.append($('<option>', {
-                        value: selectedTable+"-"+selectedTableColumns[i],
-                        text: selectedTableColumns[i]
+                        value: selectedTable + "-" + columnName,
+                        text: columnName,
+                        'data-type': dataType
                     }));
-                }
+                });
 
                 // Enable the second dropdown
                 columnValuesSelect.prop('disabled', false);
             } else {
-                // Disable the second dropdown if "none" is chosen
-                columnValuesSelect.prop('disabled', true);
+                console.error('Selected table has no columns.');
             }
-        });
+        } else {
+            // Disable the second dropdown if "none" is chosen
+            columnValuesSelect.prop('disabled', true);
+        }
     });
+});
+
+
 </script>
     <script src="{{asset('ReportMaker/js/custom.js')}}"></script>
 
@@ -570,9 +601,11 @@
                      show_form2(_ft,_this)
                  })
                  $('#palleon-shape').click(function(){
+                  var selectedOption = $('#column-values-select option:selected');
                    var _ft = $('#column-values-select').val()
                    var _this = $(this)
-                     show_form_tables(_ft,_this)
+                   var dataType = selectedOption.data('type');
+                     show_form_tables(_ft,_this,dataType)
                  })
 
                  $('#temform').click(function(){
@@ -613,7 +646,16 @@
                      var fg = $("<div class='form-group pb-1 mb-1 border-bottom border-dark form-item' data-id='" + id + "'>");
                      var _title = id;
                      var input;
-   
+                     var newListItem = document.createElement("li");
+
+                      // You can add content or attributes to the new list item if needed
+                      newListItem.textContent = "-"+id+" Added"; // Replace with the desired content
+
+                      // Get the reference to the ul element with the id "palleon-layers"
+                      var layersUl = document.getElementById("palleon-layers");
+
+                      // Append the new list item to the ul element
+                      layersUl.appendChild(newListItem);
                      fg.append("<label class='control-label'>" + _title + "<a class='badge badge-danger ml-2 remove_field' data-id='" + id + "'> Remove</a></label>");
    
                      // Field ID NAME
@@ -872,7 +914,39 @@
                })
                }
 
-               function show_form_tables(_ft,_this,__id = ''){
+               function show_form_tables(_ft,_this,dataType,__id = ''){
+                if(dataType=="boolean")      
+                 {
+                  var Ftname=_ft;
+                    var parts = Ftname.split('-');
+
+                    // Check if there is a part after the hyphen
+                    if (parts.length > 1) {
+
+                        var name = parts[1];
+                        
+                    }
+                  
+                    
+                  var typeyes=name+"-yes";
+                  var typeno=name+"-no";
+                  var item1 = $('<div class="field-item-table" data-type="' + _ft + '" data-type2="'+dataType+'" >');
+                     item1.attr('id', id);
+                     item1.text(typeyes);
+                     if (__id == '') {
+                     $('#id-card-field').append(item1);
+                     }
+                     var id = (__id != "" ? __id : _ft  + ($('#id-card-field .field-item-table').length + 1))
+                     var item2 = $('<div class="field-item-table" data-type="' + _ft + '" data-type2="'+dataType+'" >');
+                     item2.attr('id', id);
+                     item2.text(typeno);
+                     if (__id == '') {
+                     $('#id-card-field').append(item2);
+                     }
+                    data_func_col(); 
+                 }
+                 else{
+             
                 var colname="%"+_ft+"%";
                      var id = (__id != "" ? __id : _ft  + ($('#id-card-field .field-item-table').length + 1))
                      var fg = $("<div class='form-group pb-1 mb-1 border-bottom border-dark form-item-table' data-id='" + id + "'>");
@@ -927,9 +1001,10 @@
    
                          data_func_col();  // Assuming this is a function to handle your data
                        }
-   
+                 
                      // Field Item
-                     var item = $('<div class="field-item-table" data-type="' + _ft + '">');
+                     // Field Item
+                     var item = $('<div class="field-item-table" data-type="' + _ft + '" data-type2="'+dataType+'">');
                      item.attr('id', id);
                      item.text(colname);
    
@@ -937,45 +1012,46 @@
                          $('#id-card-field').append(item);
                      }
    
-                     data_func_col(); // Assuming this is a function to handle your data
+                     data_func_col(); 
+                    }// Assuming this is a function to handle your data
                    
                }
                function foo() {
-        $(".child").resizable({
-            minWidth: 25,
-            minHeight: 25,
-            maxWidth: $(".parent").width(),
-            containment: "parent",
-            handles: "ne,nw,se,sw,n,w,e,s"
-        });
+                        $(".child").resizable({
+                            minWidth: 25,
+                            minHeight: 25,
+                            maxWidth: $(".parent").width(),
+                            containment: "parent",
+                            handles: "ne,nw,se,sw,n,w,e,s"
+                        });
 
-        $(".child").draggable({
-            containment: "parent",
-            cursor: "move"
-        });
+                        $(".child").draggable({
+                            containment: "parent",
+                            cursor: "move"
+                        });
 
-        var geklikt = false;
-        $(".child").click(function () {
-            if (geklikt === false) {
-                $(".child").draggable("disable"); // Disable dragging during rotation
-                rotate($(this));
-                geklikt = true;
-            } else {
-                $(".child").draggable("enable"); // Enable dragging after rotation
-                geklikt = false;
-            }
-        });
+                        var geklikt = false;
+                        $(".child").click(function () {
+                            if (geklikt === false) {
+                                $(".child").draggable("disable"); // Disable dragging during rotation
+                                rotate($(this));
+                                geklikt = true;
+                            } else {
+                                $(".child").draggable("enable"); // Enable dragging after rotation
+                                geklikt = false;
+                            }
+                        });
 
-        function rotate(element) {
-            var degree = 0;
-            element.css('transform', 'rotate(' + degree + 'deg)');
+                        function rotate(element) {
+                            var degree = 0;
+                            element.css('transform', 'rotate(' + degree + 'deg)');
 
-            element.on('click', function () {
-                degree += 45;
-                $(this).css('transform', 'rotate(' + degree + 'deg)');
-            });
-        }
-    }
+                            element.on('click', function () {
+                                degree += 45;
+                                $(this).css('transform', 'rotate(' + degree + 'deg)');
+                            });
+                        }
+                    }
    
 
                function data_func2(){
@@ -1179,8 +1255,12 @@
                  }) 
                  $('.field-item-table').on('mousedown',function(){
                    var _ft = $(this).attr('data-type')
+                   var Ftype = $(this).attr('data-type2')
                    var _this = $(this)
-                   show_form_tables(_ft,_this,_this.attr('id'))
+                   if(Ftype!="boolean")
+                   {
+                   show_form_tables(_ft,_this,Ftype,_this.attr('id'))
+                   }
                  if(_this.hasClass('ui-draggable') == false){
                    _this.draggable({
                      containment: "parent",
@@ -1204,10 +1284,14 @@
                        })
                        var left = !!pos.left ? (pos.left).replace("px",'') : 0;
                        var top = !!pos.top ? (pos.top).replace("px",'') : 0;
+                       
                        nt = ((parseFloat(top)/parseFloat(p_height)) * 100)
                        nl = ((parseFloat(left)/parseFloat(p_width)) * 100)
+                       if(Ftype!="boolean")
+                   {
                        $('input[name="position_col[]"][data-pos="top"]').val(nt).trigger("change")
                        $('input[name="position_col[]"][data-pos="left"]').val(nl).trigger("change")
+                   }
                      }
                    })
                  }

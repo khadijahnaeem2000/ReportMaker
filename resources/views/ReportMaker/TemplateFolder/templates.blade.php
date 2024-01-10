@@ -63,7 +63,7 @@
         <div class="palleon-tabs">
                    
                
-        <a type="button" href="{{route($folder->url,$folder->id)}}" class="palleon-btn primary palleon-lg-btn btn-full"><span class="material-icons">add_circle</span>Make Template</a>        
+        <a type="button" href="{{route($folder->url,[$folder->id])}}" class="palleon-btn primary palleon-lg-btn btn-full"><span class="material-icons">add_circle</span>Make Template</a>        
                   
                        
                    
@@ -76,16 +76,43 @@
     <div id="palleon-body">
         <div class="palleon-wrap">
         <div class="container text-center">
+        @if (\Session::has('error'))
+     <div class="alert alert-danger alert-dismissible">
+        <h5><i class="icon fas fa-wrong"></i> ¡Attention!</h5>
+        {!! \Session::get('error') !!}
+    </div>
+    @endif
+    @if (\Session::has('success'))
+     <div class="alert alert-success alert-dismissible">
+        {!! \Session::get('success') !!}
+    </div>
+    @endif
     <div class="row align-items-center">
         @php $folderCount = 0; @endphp
 
-        @foreach($templates as $folder)
+        @foreach($templates as $temp)
        
         <div class="col col-3 d-flex flex-column align-items-center"> <!-- Added d-flex and flex-column classes -->
         <a href="#">
-    <div class="image-container" style="background:url({{$folder->cover}});"></div>
+    <i class="bi bi-file-earmark-pdf-fill"></i>
 </a>
-            <h3>{{$folder->name}}</h3>
+            <h3>{{$temp->name}}</h3>
+            @if($temp->IsActive=="Active") <a class="palleon-btn primary" style="background-color:green;">Deployed </a>@endif
+            <div class="d-inline">
+    <p><b>StartDate</b>:{{$temp->StartDate}}
+    @if($temp->EndDate!=null)
+             
+             <b>EndDate</b>:{{$temp->EndDate}}
+                      
+                       @endif
+                       </p>
+              </div>
+             
+
+<div class="d-inline">
+<a href="{{route('TemplateDelete',$temp->id)}}">  <i class="fa fa-trash" aria-hidden="true" style="color:#FF5733;"></i></a>
+   <a href="{{route('IDCard',[$folder->id,$temp->id])}}"> <i class="fas fa-edit" style="color:blue;"></i></a>
+</div>
         </div>
 
         @php

@@ -25,6 +25,7 @@ class Templatemaker extends Migration
             $table->longText("cover")->nullable();
             $table->Date("StartDate")->nullable();
             $table->Date("EndDate")->nullable();
+            $table->string("IsActive")->nullable();
             $table->timestamps();
         });
     }
