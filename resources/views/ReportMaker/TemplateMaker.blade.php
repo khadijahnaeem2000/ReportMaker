@@ -3,10 +3,9 @@
 
 @include('ReportMaker.layout.header')
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Roboto:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  
     <style>
       
         #id-card-field{
@@ -114,11 +113,11 @@
         margin-right:5px ;
       }
       .child {
-        background: red;
         width: 150px;
         height: 80px;
         position: absolute;
         background-size: cover;
+        
     }
 
     .ui-resizable-ne,
@@ -151,6 +150,16 @@
     .ui-resizable-w {
         top: 50% !important;
         margin-top: -6px !important;
+    }
+    .delete-icon {
+        position: absolute;
+        top: 0;
+        right: 0;
+        cursor: pointer;
+        color: white;
+        background: red;
+        padding: 3px;
+        font-size: 12px;
     }
       </style>
 </head>
@@ -436,13 +445,7 @@
     <script src="{{asset('ReportMaker/js/plugins.min.js')}}"></script>
     <script src="{{asset('ReportMaker/js/palleon.min.js')}}"></script>
      <!-- Canvas Ruler -->
-    <script type="text/javascript">
-        if (document.body.clientWidth >= 1200) {
-            var evt = new Event('palleon-ruler'),
-            dragdrop = new Dragdrop(evt),
-            rg  = new RulersGuides(evt, dragdrop, document.getElementById("palleon-ruler"));
-        }
-    </script>
+
    <script>
 
 $(document).ready(function() {
@@ -646,16 +649,7 @@ $(document).ready(function() {
                      var fg = $("<div class='form-group pb-1 mb-1 border-bottom border-dark form-item' data-id='" + id + "'>");
                      var _title = id;
                      var input;
-                     var newListItem = document.createElement("li");
-
-                      // You can add content or attributes to the new list item if needed
-                      newListItem.textContent = "-"+id+" Added"; // Replace with the desired content
-
-                      // Get the reference to the ul element with the id "palleon-layers"
-                      var layersUl = document.getElementById("palleon-layers");
-
-                      // Append the new list item to the ul element
-                      layersUl.appendChild(newListItem);
+                   
                      fg.append("<label class='control-label'>" + _title + "<a class='badge badge-danger ml-2 remove_field' data-id='" + id + "'> Remove</a></label>");
    
                      // Field ID NAME
@@ -719,6 +713,16 @@ $(document).ready(function() {
    
                      if (__id == '') {
                          $('#id-card-field').append(item);
+                         var newListItem = document.createElement("li");
+
+                                // You can add content or attributes to the new list item if needed
+                                newListItem.textContent = "-"+id+" Added"; // Replace with the desired content
+
+                                // Get the reference to the ul element with the id "palleon-layers"
+                                var layersUl = document.getElementById("palleon-layers");
+
+                                      // Append the new list item to the ul element
+                            layersUl.appendChild(newListItem);
                      }
    
                      data_func();  // Assuming this is a function to handle your data
@@ -728,7 +732,7 @@ $(document).ready(function() {
    
                function show_form2(_ft,_this,__id = ''){
               
-                           var id = (__id != "" ? __id : "ImageField" + ($('#id-card-field .field-item-image').length + 1));
+                           var id = (__id != "" ? __id : "ImageField" + ($('#id-card-field .child').length + 1));
                            var fg = $("<div class='form-group pb-1 mb-1 border-bottom border-dark form-item' data-id='" + id + "'>");
                            var _title = id;
                            var input;
@@ -743,22 +747,22 @@ $(document).ready(function() {
                            input.append('<label class="palleon-control-label">Select Image</label><input type="file" class="palleon-form-field" name="filename" data-id="' + id + '"/>');
                            input.append('<div class="clearfix col-12 mb-2"></div>');
    
-                           input.append('<label class="palleon-control-label">Image Size</label><div class="row"><div class="col-4"><input class="palleon-form-field" type="number" step="any" name="size-image[]" data-size="height" data-id="' + id + '"/><label class="palleon-control-label">Height (%)</label></div><div class="col-4"><input class="palleon-form-field" type="number" step="any" name="size-image[]" data-size="width" data-id="' + id + '"/><label class="col-form-label">Width (%)</label></div></div>');
-                           input.append('<div class="clearfix col-12 mb-2"></div>');
-                           // Borders
-                           input.append('<label class="palleon-control-label">Border</label><div class="col-8"><label class="form-check-label d-flex align-items-center"><input type="checkbox" class="mr-2 form-check-input" value="top" name="border-image" data-id="' + id + '"/> Top</label><label class="form-check-label d-flex align-items-center"><input type="checkbox" class="mr-2 form-check-input" value="bottom" name="border-image" data-id="' + id + '"/> Bottom</label><label class="form-check-label d-flex align-items-center"><input type="checkbox" class="mr-2 form-check-input" value="left" name="border-image" data-id="' + id + '"/> Left</label><label class="form-check-label d-flex align-items-center"><input type="checkbox" class="mr-2 form-check-input" value="right" name="border-image" data-id="' + id + '"/> Right</label></div>');
+                    //        input.append('<label class="palleon-control-label">Image Size</label><div class="row"><div class="col-4"><input class="palleon-form-field" type="number" step="any" name="size-image[]" data-size="height" data-id="' + id + '"/><label class="palleon-control-label">Height (%)</label></div><div class="col-4"><input class="palleon-form-field" type="number" step="any" name="size-image[]" data-size="width" data-id="' + id + '"/><label class="col-form-label">Width (%)</label></div></div>');
+                    //        input.append('<div class="clearfix col-12 mb-2"></div>');
+                    //        // Borders
+                    //        input.append('<label class="palleon-control-label">Border</label><div class="col-8"><label class="form-check-label d-flex align-items-center"><input type="checkbox" class="mr-2 form-check-input" value="top" name="border-image" data-id="' + id + '"/> Top</label><label class="form-check-label d-flex align-items-center"><input type="checkbox" class="mr-2 form-check-input" value="bottom" name="border-image" data-id="' + id + '"/> Bottom</label><label class="form-check-label d-flex align-items-center"><input type="checkbox" class="mr-2 form-check-input" value="left" name="border-image" data-id="' + id + '"/> Left</label><label class="form-check-label d-flex align-items-center"><input type="checkbox" class="mr-2 form-check-input" value="right" name="border-image" data-id="' + id + '"/> Right</label></div>');
    
-                           // Border Color
-                           input.append('<label class="palleon-control-label">Border Color</label><input class="palleon-form-field colorpicker2" name="border_color-image" data-id="' + id + '"/>');
-                           input.append('<div class="clearfix col-12 mb-2"></div>');
+                    //        // Border Color
+                    //        input.append('<label class="palleon-control-label">Border Color</label><input class="palleon-form-field colorpicker2" name="border_color-image" data-id="' + id + '"/>');
+                    //        input.append('<div class="clearfix col-12 mb-2"></div>');
    
-                           // Element Position
-                           input.append('<div class="palleon-control-wrap"><label class="palleon-control-label">Position-Right</label><div class="palleon-control"><input class="palleon-form-field" type="number" step="any" name="position-image[]"  data-pos="top" data-id="' + id + '"/></div></div>');
+                    //        // Element Position
+                    //        input.append('<div class="palleon-control-wrap"><label class="palleon-control-label">Position-Right</label><div class="palleon-control"><input class="palleon-form-field" type="number" step="any" name="position-image[]"  data-pos="top" data-id="' + id + '"/></div></div>');
                     
-                    // Element Position
+                    // // Element Position
                    
-                    input.append('<div class="palleon-control-wrap"><label class="palleon-control-label">Position-Left</label><div class="palleon-control"><input class="palleon-form-field" type="number" step="any" name="position-image[]" data-pos="left" data-id="' + id + '"/></div></div>');
-                           input.append('<div class="clearfix col-12 mb-2"></div>');
+                    // input.append('<div class="palleon-control-wrap"><label class="palleon-control-label">Position-Left</label><div class="palleon-control"><input class="palleon-form-field" type="number" step="any" name="position-image[]" data-pos="left" data-id="' + id + '"/></div></div>');
+                    //        input.append('<div class="clearfix col-12 mb-2"></div>');
    
                            fg.append(input);
    
@@ -775,12 +779,21 @@ $(document).ready(function() {
                            }
    
                            // field Item
-                           var item = $('<div class="field-item img " data-type="' + _ft + '">');
+                           var item = $('<div class="field-item img " data-type="' + id + '">');
                            item.attr('id', id);
                            item.append("<img  accept='image/*' data-id='" + id + "' src=''/>");
    
                            if (__id == '') {
                                $('#id-card-field').append(item);
+                               var newListItem = document.createElement("li");
+                                 // You can add content or attributes to the new list item if needed
+                                 newListItem.textContent = "-"+id+" Added"; // Replace with the desired content
+
+                                  // Get the reference to the ul element with the id "palleon-layers"
+                                  var layersUl = document.getElementById("palleon-layers");
+
+                                        // Append the new list item to the ul element
+                                  layersUl.appendChild(newListItem);
                            }
    
                            data_func2();  // Assuming this is a function to handle your data
@@ -880,6 +893,15 @@ $(document).ready(function() {
                  $('.field-item').on('mousedown',function(){
                    var _ft = $(this).attr('data-type')
                    var _this = $(this)
+                   var palleonText = document.getElementById('palleon-text');
+                    // Make the #palleon-text element visible
+                    palleonText.classList.remove('panel-hide');
+                    var palleonImage = document.getElementById('palleon-image');
+                    // Make the #palleon-text element visible
+                    palleonImage.classList.add('panel-hide');
+                    var palleonShapes = document.getElementById('palleon-shapes');
+                    // Make the #palleon-text element visible
+                    palleonShapes.classList.add('panel-hide');
                    show_form(_ft,_this,_this.attr('id'))
                  if(_this.hasClass('ui-draggable') == false){
                    _this.draggable({
@@ -1004,12 +1026,22 @@ $(document).ready(function() {
                  
                      // Field Item
                      // Field Item
-                     var item = $('<div class="field-item-table" data-type="' + _ft + '" data-type2="'+dataType+'">');
+                     var item = $('<div class="field-item-table"  data-type="' + _ft + '" data-type2="'+dataType+'">h</div>');
                      item.attr('id', id);
                      item.text(colname);
    
                      if (__id == '') {
                          $('#id-card-field').append(item);
+                        
+                         var newListItem = document.createElement("li");
+                           // You can add content or attributes to the new list item if needed
+                           newListItem.textContent = "-Database column Added"; // Replace with the desired content
+
+                                  // Get the reference to the ul element with the id "palleon-layers"
+                                  var layersUl = document.getElementById("palleon-layers");
+
+                                        // Append the new list item to the ul element
+                                  layersUl.appendChild(newListItem);
                      }
    
                      data_func_col(); 
@@ -1051,7 +1083,14 @@ $(document).ready(function() {
                                 $(this).css('transform', 'rotate(' + degree + 'deg)');
                             });
                         }
+                        $(".delete-icon").click(function (e) {
+                            e.stopPropagation();
+                            $(this).closest(".child").remove();
+                        });
                     }
+
+
+                  
    
 
                function data_func2(){
@@ -1139,7 +1178,7 @@ $(document).ready(function() {
                      var data = e.target.result
                        data = data.split(';base64,')
                        dataType="image";
-                       var elementsToRemove = document.querySelectorAll('[data-type="' + dataType + '"]');
+                       var elementsToRemove = document.querySelectorAll('[data-type="' + id + '"]');
                         elementsToRemove.forEach(function(element) {
                             element.parentNode.removeChild(element);
                         });
@@ -1147,9 +1186,13 @@ $(document).ready(function() {
                           if (elementToRemove) {
                               elementToRemove.parentNode.removeChild(elementToRemove);
                           }
+                          alert(id);
                           // $('img[data-id="'+id+'"]').attr("src",e.target.result);
                          var newDiv = $('<div class="child" data-id="'+id+'" id="'+id+'"  data-type="image"></div>').css('background-image', 'url(' + e.target.result + ')');
-                        $('#id-card-field').append(newDiv);
+                          // Add a delete icon to the new div
+                            var deleteIcon = $('<span class="delete-icon">&#10006;</span>');
+                            newDiv.append(deleteIcon);
+                         $('#id-card-field').append(newDiv);
                         foo();
                        }
    
@@ -1165,7 +1208,16 @@ $(document).ready(function() {
                  $('.field-item').on('mousedown',function(){
                    var _ft = $(this).attr('data-type')
                    var _this = $(this)
-                   show_form(_ft,_this,_this.attr('id'))
+                   show_form2(_ft,_this,_this.attr('id'))
+                   var palleonText = document.getElementById('palleon-text');
+                    // Make the #palleon-text element visible
+                    palleonText.classList.add('panel-hide');
+                    var palleonImage = document.getElementById('palleon-image');
+                    // Make the #palleon-text element visible
+                    palleonImage.classList.remove('panel-hide');
+                    var palleonShapes = document.getElementById('palleon-shapes');
+                    // Make the #palleon-text element visible
+                    palleonShapes.classList.add('panel-hide');
                
                })
                }
@@ -1253,12 +1305,29 @@ $(document).ready(function() {
                    $('.field-item#'+id).remove()
                    $('#field-form-table').html('')
                  }) 
+                 $(".child").resizable({
+                            minWidth: 25,
+                            minHeight: 25,
+                            maxWidth: $(".parent").width(),
+                            containment: "parent",
+                            handles: "ne,nw,se,sw,n,w,e,s"
+                        });
                  $('.field-item-table').on('mousedown',function(){
                    var _ft = $(this).attr('data-type')
                    var Ftype = $(this).attr('data-type2')
                    var _this = $(this)
                    if(Ftype!="boolean")
                    {
+                    var palleonText = document.getElementById('palleon-text');
+                    // Make the #palleon-text element visible
+                    palleonText.classList.add('panel-hide');
+                    var palleonImage = document.getElementById('palleon-image');
+                    // Make the #palleon-text element visible
+                    palleonImage.classList.add('panel-hide');
+                    var palleonShapes = document.getElementById('palleon-shapes');
+                    // Make the #palleon-text element visible
+                    palleonShapes.classList.remove('panel-hide');
+               
                    show_form_tables(_ft,_this,Ftype,_this.attr('id'))
                    }
                  if(_this.hasClass('ui-draggable') == false){
